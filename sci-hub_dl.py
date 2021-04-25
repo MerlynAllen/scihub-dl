@@ -59,14 +59,14 @@ try:
     if len(sys.argv) > 1:
         if "--doi" in sys.argv:
             try:
-                DOI = sys.argv[sys, sys.argv.index("--doi") + 1]
+                DOI = sys.argv[sys.argv.index("--doi") + 1]
                 startFile(downloadPDF(fetchPDF(DOI)))
             except IndexError:
                 print("Needs parameter: <DOI>. Entering interactive mode.")
                 interactiveMode()
         elif "--url" in sys.argv:
             try:
-                URL = sys.argv[sys, sys.argv.index("--url") + 1]
+                URL = sys.argv[sys.argv.index("--url") + 1]
                 startFile(downloadPDF(fetchPDF(fetchDOI(URL))))
             except IndexError:
                 print("Needs parameter: <URL>. Entering interactive mode.")
