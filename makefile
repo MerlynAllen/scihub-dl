@@ -6,3 +6,5 @@ script_binary.o:sci-hub_dl.py
 	ld.exe -r -b binary -o script_binary.o sci-hub_dl.py
 clean:
 	del *.o *.exe
+install:sci-hub_dl.exe
+	copy sci-hub_dl.exe C:\Windows\
