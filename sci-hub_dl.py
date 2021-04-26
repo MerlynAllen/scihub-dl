@@ -14,14 +14,14 @@ def fetchDOI(pdf_page_url):
     doi = doi_pattern.search(page)
     try:
         print("[\033[32m●\033[0m] Found DOI \033[32m\033[45m{}\033[0m".format(doi.group(0)))
-    except:
+    except AttributeError:
         print("[\033[33m●\033[0m] Unable to find DOI.")
     return doi.group(0)
 
 
 def fetchPDF(doi):
     print("[\033[34m●\033[0m] Finding PDF file", end='\r')
-    r = requests.get("https://sci-hub.mksa.top/{}".format(doi), verify=False)
+    r = requests.get("https://sci-hub.se/{}".format(doi), verify=False)
     pattern = re.compile(
         "\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\/(?:[-a-zA-Z0-9()@:%_\+.~#?&//=]*?)\.pdf")
     pdf_page_url = pattern.search(r.text)
