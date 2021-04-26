@@ -15,7 +15,7 @@ def fetchDOI(pdf_page_url):
     try:
         print("[\033[32m●\033[0m] Found DOI \033[32m\033[45m{}\033[0m".format(doi.group(0)))
     except:
-        print("[\033[32m●\033[0m] Unable to find DOI.")
+        print("[\033[33m●\033[0m] Unable to find DOI.")
     return doi.group(0)
 
 
@@ -29,7 +29,7 @@ def fetchPDF(doi):
         print("[\033[32m●\033[0m] Found url of PDF file at \033[33m\033[45mhttps:{}\033[0m".format(
         pdf_page_url.group(0)))
     except AttributeError:
-        print("[\033[34m●\033[0m] Unable to find PDF.")
+        print("[\033[33m●\033[0m] Unable to find PDF.")
     return pdf_page_url
 
 
