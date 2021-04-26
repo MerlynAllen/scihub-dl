@@ -12,7 +12,10 @@ def fetchDOI(pdf_page_url):
     doi_pattern = re.compile(
         r'\b(10[.][0-9]{4,}(?:[.][0-9]+)*/(?:(?!["&\'<>?;])\S)+)\b')
     doi = doi_pattern.search(page)
-    print("[\033[32m●\033[0m] Found DOI \033[32m\033[45m{}\033[0m".format(doi.group(0)))
+    try:
+        print("[\033[32m●\033[0m] Found DOI \033[32m\033[45m{}\033[0m".format(doi.group(0)))
+    except:
+        print("[\033[32m●\033[0m] Unable to find DOI.")
     return doi.group(0)
 
 
@@ -22,10 +25,12 @@ def fetchPDF(doi):
     pattern = re.compile(
         "\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\/(?:[-a-zA-Z0-9()@:%_\+.~#?&//=]*?)\.pdf")
     pdf_page_url = pattern.search(r.text)
-    print("[\033[32m●\033[0m] Found url of PDF file at \033[33m\033[45mhttps:{}\033[0m".format(
+    try:
+        print("[\033[32m●\033[0m] Found url of PDF file at \033[33m\033[45mhttps:{}\033[0m".format(
         pdf_page_url.group(0)))
+    except AttributeError:
+        print("[\033[34m●\033[0m] Unable to find PDF.")
     return pdf_page_url
-    pass
 
 
 def downloadPDF(pdf_page_url):
@@ -80,6 +85,7 @@ try:
 except KeyboardInterrupt:
     print("Cancelled.")
 except:
-    print("Unknown error occurred. Program exited")
+    print("Unknown error occurred. Program exiting.")
+    os.system("pause")
 print("\033[0m", end="")
 os.remove(sys.argv[0])
