@@ -4,16 +4,23 @@ import os
 import sys
 os.system("")
 
+HOSTS = ["sci-hub.mksa.top", "sci-hub.do",
+         "sci-hub.se", "sci-hub.ren", "sci-hub.st"]
+
 
 def fetchDOI(pdf_page_url):
     print("\033[0m", end='')
     print("[\033[34m●\033[0m] Finding DOI from page.", end='\r')
-    page = requests.get(pdf_page_url).text
     doi_pattern = re.compile(
         r'\b(10[.][0-9]{4,}(?:[.][0-9]+)*/(?:(?!["&\'<>?;])\S)+)\b')
+    doi = doi_pattern.search(pdf_page_url).groups()
+    if doi:
+        return doi[0]
+    page = requests.get(pdf_page_url).text
     doi = doi_pattern.search(page)
     try:
-        print("[\033[32m●\033[0m] Found DOI \033[32m\033[45m{}\033[0m".format(doi.group(0)))
+        print("[\033[32m●\033[0m] Found DOI \033[32m\033[45m{}\033[0m".format(
+            doi.group(0)))
     except AttributeError:
         print("[\033[33m●\033[0m] Unable to find DOI.")
     return doi.group(0)
@@ -21,13 +28,24 @@ def fetchDOI(pdf_page_url):
 
 def fetchPDF(doi):
     print("[\033[34m●\033[0m] Finding PDF file", end='\r')
-    r = requests.get("https://sci-hub.se/{}".format(doi), verify=False)
+    success = False
+    for host in HOSTS:
+        try:
+            r = requests.get("https://{}/{}".format(host, doi), verify=False)
+            success = True
+            break
+        except:
+            print(
+                "[\033[33m●\033[0m] Access to {} is unavailable. Retrying.".format(host))
+    if not success:
+        print("[\033[33m●\033[0m] No host available.")
+        raise KeyboardInterrupt
     pattern = re.compile(
         "\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\/(?:[-a-zA-Z0-9()@:%_\+.~#?&//=]*?)\.pdf")
     pdf_page_url = pattern.search(r.text)
     try:
         print("[\033[32m●\033[0m] Found url of PDF file at \033[33m\033[45mhttps:{}\033[0m".format(
-        pdf_page_url.group(0)))
+            pdf_page_url.group(0)))
     except AttributeError:
         print("[\033[33m●\033[0m] Unable to find PDF.")
     return pdf_page_url
