@@ -13,9 +13,9 @@ def fetchDOI(pdf_page_url):
     print("[\033[34m●\033[0m] Finding DOI from page.", end='\r')
     doi_pattern = re.compile(
         r'\b(10[.][0-9]{4,}(?:[.][0-9]+)*/(?:(?!["&\'<>?;])\S)+)\b')
-    doi = doi_pattern.search(pdf_page_url).groups()
+    doi = doi_pattern.search(pdf_page_url)
     if doi:
-        return doi[0]
+        return doi.groups()[0]
     page = requests.get(pdf_page_url).text
     doi = doi_pattern.search(page)
     try:
