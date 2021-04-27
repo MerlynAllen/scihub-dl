@@ -15,28 +15,31 @@ def fetchDOI(pdf_page_url):
         r'\b(10[.][0-9]{4,}(?:[.][0-9]+)*/(?:(?!["&\'<>?;])\S)+)\b')
     doi = doi_pattern.search(pdf_page_url)
     if doi:
-        return doi.groups()[0]
-    page = requests.get(pdf_page_url).text
-    doi = doi_pattern.search(page)
-    try:
         print("[\033[32m●\033[0m] Found DOI \033[32m\033[45m{}\033[0m".format(
             doi.group(0)))
-    except AttributeError:
+        return doi.group(0)
+    page = requests.get(pdf_page_url).text
+    doi = doi_pattern.search(page)
+    if doi:
+        print("[\033[32m●\033[0m] Found DOI \033[32m\033[45m{}\033[0m".format(
+            doi.group(0)))
+    else:
         print("[\033[33m●\033[0m] Unable to find DOI.")
     return doi.group(0)
 
 
 def fetchPDF(doi):
-    print("[\033[34m●\033[0m] Finding PDF file", end='\r')
+    print("[\033[34m●\033[0m] Finding PDF file.", end='\r')
     success = False
     for host in HOSTS:
         try:
+            print("Trying {}...".format(host), end='\r')
             r = requests.get("https://{}/{}".format(host, doi), verify=False)
             success = True
             break
         except:
             print(
-                "[\033[33m●\033[0m] Access to {} is unavailable. Retrying.".format(host))
+                "[\033[33m●\033[0m] Access to {} is unavailable. Retrying.".format(host), end='\r')
     if not success:
         print("[\033[33m●\033[0m] No host available.")
         raise KeyboardInterrupt
@@ -54,7 +57,12 @@ def fetchPDF(doi):
 def downloadPDF(pdf_page_url):
     print("[\033[34m●\033[0m] Downloading from \033[35mhttps:{}\033[0m".format(
         pdf_page_url.group(0)), end='\r')
-    r = requests.get("https:" + pdf_page_url.group(0))
+    try:
+        r = requests.get("https:" + pdf_page_url.group(0))
+    except:
+        print("\033[2K", end='\r')
+        print(
+            "[\033[33m●\033[0m] Unable to download PDF file. Please copy the URL above and download manually.")
     filename = re.findall(
         "\/([-a-zA-Z0-9()@:%_\+.~#?&=]*?\.pdf)$", pdf_page_url.group(0))
     with open(os.path.join(os.environ['HOME'], "Downloads", filename[0]), 'wb') as pdf:
@@ -101,9 +109,11 @@ try:
         interactiveMode()
 
 except KeyboardInterrupt:
-    print("Cancelled.")
+    print("\033[2K", end='\r')
+    print("[\033[33m●\033[0m] \033[33mCancelled.\033[0m")
 except:
-    print("Unknown error occurred. Program exiting.")
+    print("\033[2K", end='\r')
+    print("[\033[33m●\033[0m] \033[33mUnknown error occurred. Program exiting.\033[0m")
     os.system("pause")
 print("\033[0m", end="")
 os.remove(sys.argv[0])
