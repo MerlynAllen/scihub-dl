@@ -65,7 +65,7 @@ def downloadPDF(pdf_page_url):
             "[\033[33m●\033[0m] Unable to download PDF file. Please copy the URL above and download manually.")
     filename = re.findall(
         "\/([-a-zA-Z0-9()@:%_\+.~#?&=]*?\.pdf)$", pdf_page_url.group(0))
-    with open(os.path.join(os.environ['HOME'], "Downloads", filename[0]), 'wb') as pdf:
+    with open(os.path.join(os.environ['USERPROFILE'], "Downloads", filename[0]), 'wb') as pdf:
         pdf.write(r.content)
         pdf.flush()
         pdf.close()
@@ -77,7 +77,7 @@ def downloadPDF(pdf_page_url):
 
 def startFile(filename):
     os.startfile(os.path.abspath(os.path.join(
-        os.environ['HOME'], "Downloads", filename)))
+        os.environ['USERPROFILE'], "Downloads", filename)))
 
 
 def interactiveMode():
@@ -114,6 +114,5 @@ except KeyboardInterrupt:
 except:
     print("\033[2K", end='\r')
     print("[\033[33m●\033[0m] \033[33mUnknown error occurred. Program exiting.\033[0m")
-    os.system("pause")
 print("\033[0m", end="")
 os.remove(sys.argv[0])
